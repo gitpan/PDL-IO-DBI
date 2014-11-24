@@ -1,0 +1,52 @@
+{
+   "abstract" : "Create PDL from database (optimized for speed and large data)",
+   "author" : [
+      "KMX <kmx@cpan.org>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "ExtUtils::MakeMaker version 6.86, CPAN::Meta::Converter version 2.133380",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "PDL-IO-DBI",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "inc"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "DBI" : "0",
+            "Exporter" : "5.59",
+            "PDL" : "0",
+            "Test::More" : "0.88",
+            "Test::Number::Delta" : "1.05"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "DBI" : "0",
+            "Exporter" : "5.59",
+            "PDL" : "0"
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "repository" : {
+         "url" : "https://github.com/kmx/pdl-io-dbi"
+      }
+   },
+   "version" : "0.003"
+}
