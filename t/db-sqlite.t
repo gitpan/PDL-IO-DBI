@@ -134,6 +134,8 @@ delta_ok($t2->sum, $p2f[0]->sum + $p2f[1]->sum + $p2f[2]->sum + $p2f[3]->sum, "s
 ### TAB3
 my $t3  = rdbi2D($dsn, "select * from tab3");
 my $t3b = rdbi2D($dsn, "select * from tab3", {null2bad=>1});
+is($t3->sum,  33, '$t3->sum');
+is($t3b->sum, 33, '$t3b->sum');
 is($t3->info,  "PDL: Long D [5,3]", '$t3->info');
 is($t3b->info, "PDL: Long D [5,3]", '$t3b->info');
 delta_ok($t3b->sum, $t3->sum, '$t3b->sum == $t3->sum');
@@ -143,5 +145,7 @@ is($t3->at(4,2), 0, '$t3->at(4,2)');
 is($t3b->at(2,0), 'BAD', '$t3b->at(2,0)');
 is($t3b->at(3,1), 'BAD', '$t3b->at(3,1)');
 is($t3b->at(4,2), 'BAD', '$t3b->at(4,2)');
+
+unlink($db);
 
 done_testing;

@@ -10,7 +10,7 @@ use Test::Number::Delta relative => 0.00001;
 plan skip_all => "DBD::Pg not installed" unless eval { require DBD::Pg };
 plan skip_all => "PDL_IO_DBI_PG_TEST_DSN not set" unless $ENV{PDL_IO_DBI_PG_TEST_DSN};
 
-my $dsn = $ENV{PDL_IO_DBI_PG_TEST_DSN}; # e.g. dbi:Pg:dbname=db1;host=localhost;user=postgres
+my $dsn = $ENV{PDL_IO_DBI_PG_TEST_DSN}; # e.g. PDL_IO_DBI_PG_TEST_DSN=dbi:Pg:dbname=db1;host=localhost;user=postgres
 
 my $tab1 = [
         [    1,    1  ,    -32768,    -2147483648,    -9223372036854775808,    -3.40282347e+37 ,    -1.79769313486231571e+307    ],
@@ -137,6 +137,8 @@ delta_ok($t2->sum, $p2f[0]->sum + $p2f[1]->sum + $p2f[2]->sum + $p2f[3]->sum, "s
 ### TAB3
 my $t3  = rdbi2D($dsn, "select * from tab3");
 my $t3b = rdbi2D($dsn, "select * from tab3", {null2bad=>1});
+is($t3->sum,  33, '$t3->sum');
+is($t3b->sum, 33, '$t3b->sum');
 is($t3->info,  "PDL: Long D [5,3]", '$t3->info');
 is($t3b->info, "PDL: Long D [5,3]", '$t3b->info');
 delta_ok($t3b->sum, $t3->sum, '$t3b->sum == $t3->sum');

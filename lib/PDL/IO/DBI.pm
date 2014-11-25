@@ -7,9 +7,9 @@ use Exporter 'import';
 our @EXPORT_OK   = qw(rdbi1D rdbi2D);
 our %EXPORT_TAGS = (all => \@EXPORT_OK);
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
-use constant DEBUG => $ENV{PDL_IO_DBI_PG_DEBUG} ? 1 : 0;
+use constant DEBUG => $ENV{PDL_IO_DBI_DEBUG} ? 1 : 0;
 
 use PDL;
 use DBI;
@@ -124,6 +124,7 @@ sub rdbi1D {
         my $bytes = '';
         {
           no warnings 'pack'; # intentionally disable all pack related warnings
+          no warnings 'numeric'; # disable: Argument ??? isn't numeric in pack
           no warnings 'uninitialized'; # disable: Use of uninitialized value in pack
           $bytes .= pack($c_pack->[$ci], $data->[$_][$ci]) for(0..$rows-1);
         }
@@ -184,8 +185,9 @@ sub rdbi2D {
         }
       }
       {
-        no warnings 'pack'; # intentionally disable all pack related warnings
-        no warnings 'uninitialized'; # disable: Use of uninitialized value in pack
+          no warnings 'pack'; # intentionally disable all pack related warnings
+          no warnings 'numeric'; # disable: Argument ??? isn't numeric in pack
+          no warnings 'uninitialized'; # disable: Use of uninitialized value in pack
         $bytes .= pack($pck, @$_) for (@$data);
       }
       my $len = length $bytes;
@@ -358,13 +360,8 @@ However this approach does not scale well for large data (e.g. SQL queries resul
 This module is optimized for creating piddles populated with very large database data. It currently B<supports only
 reading data from database> not updating/inserting to DB.
 
-TODO:
-
-=over
-
-=item maybe convert DATETIME, TIMESTAMP & co. to something numerical
-
-=back
+The goal of this module is to be as fast as possible. It is designed to silently converts anything into a number 
+(wrong or undefined values are converted into C<0>).
 
 =head1 FUNCTIONS
 
@@ -465,6 +462,18 @@ Example:
 
 Items supported in C<options> hash are the same as by L</rdbi1D>.
 
+=head1 TODO
+
+maybe convert DATETIME, TIMESTAMP & co. to something numerical
+
 =head1 SEE ALSO
 
 L<PDL>, L<DBI>
+
+=head1 LICENSE
+
+This program is free software; you can redistribute it and/or modify it under the same terms as Perl itself.
+
+=head1 COPYRIGHT
+
+2014+ KMX E<lt>kmx@cpan.orgE<gt>

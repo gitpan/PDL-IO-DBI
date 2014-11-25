@@ -27,5 +27,7 @@ WriteMakefile(
   },
   dist => {
       ($^O eq 'MSWin32' ? (TAR => 'ptar', TARFLAGS => '-c -C -f') : ()),
+      #PREOP => 'pod2text lib/PDL/IO/DBI.pm > README'
+      PREOP => 'perldoc -u lib/PDL/IO/DBI.pm | pod2markdown > README.md',
   },
 );
