@@ -4,9 +4,14 @@ PDL::IO::DBI - Create PDL from database (optimized for speed and large data)
 
 # SYNOPSIS
 
+    use PDL;
+    use PDL::IO::DBI ':all';
+
     # simple usage - using DSN + SQL query
     my $sql = "select ymd, open, high, low, close from quote where symbol = 'AAPL' AND ymd >= 20140404 order by ymd";
     my $pdl = rdbi2D("dbi:SQLite:dbname=Quotes.db", $sql);
+
+    use DBI;
 
     # using DBI handle + SQL query with binded values
     my $dbh = DBI->connect("dbi:Pg:dbname=QDB;host=localhost", 'username', 'password');
@@ -35,10 +40,18 @@ However this approach does not scale well for large data (e.g. SQL queries resul
 This module is optimized for creating piddles populated with very large database data. It currently **supports only
 reading data from database** not updating/inserting to DB.
 
-The goal of this module is to be as fast as possible. It is designed to silently converts anything into a number 
+The goal of this module is to be as fast as possible. It is designed to silently converts anything into a number
 (wrong or undefined values are converted into `0`).
 
 # FUNCTIONS
+
+By default, PDL::IO::DBI doesn't import any function. You can import individual functions like this:
+
+    use PDL::IO::DBI 'rdbi2D';
+
+Or import all available functions:
+
+    use PDL::IO::DBI ':all';
 
 ## rdbi1D
 
@@ -71,18 +84,33 @@ Example:
     print $low->info, "\n";
     PDL: Double D [100000]        # == 1D piddle, 100 000 rows from DB
 
-Items supported in `options` hash:
+Parameters:
+
+- dbh\_or\_dsn
+
+    [DBI](https://metacpan.org/pod/DBI) handle of database connection or data source name.
+
+- sql\_query
+
+    SQL query.
+
+- sql\_query\_params
+
+    Optional bind values that can be used for queries with placeholders.
+
+Items supported in **options** hash:
 
 - type
 
     Defines the type of output piddles: `double`, `float`, `longlong`, `long`, `short`, `byte`.
-    Default value is `auto` which means that the type of the output piddles is autodetected.
+    Default value is `auto` which means that the type of the output piddles is auto detected.
+    **BEWARE:** type \`longlong\` can be used only on perls with 64bitint support.
 
     You can set one type for all columns/piddles:
 
         my ($high, $low, $avg) = rdbi1D($dbh_or_dsn, $sql_query, {type => double});
 
-    or separately for each colum/piddle:
+    or separately for each column/piddle:
 
         my ($high, $low, $avg) = rdbi1D($dbh_or_dsn, $sql_query, {type => [long, double, double]});
 
@@ -93,9 +121,9 @@ Items supported in `options` hash:
 
 - reshape\_inc
 
-    As we do not try to load all query results into memory at once, we also do not know at the beginning how
+    As we do not try to load all query results into memory at once; we also do not know at the beginning how
     many rows there will be. Therefore we do not know how big piddle to allocate, we have to incrementally
-    (re)alocated the piddle by increments defined by this parameter. Default value is `80000`.
+    (re)allocated the piddle by increments defined by this parameter. Default value is `80000`.
 
     If you know how many rows there will be you can improve performance by setting this parameter to expected row count.
 
@@ -131,7 +159,7 @@ Example:
     print $pdl->info, "\n";
     PDL: Double D [100000, 3]     # == 2D piddle, 100 000 rows from DB
 
-Items supported in `options` hash are the same as by ["rdbi1D"](#rdbi1d).
+Parameters and items supported in `options` hash are the same as by ["rdbi1D"](#rdbi1d).
 
 # TODO
 
