@@ -27,4 +27,4 @@ requires:
   PDL: 0
 resources:
   repository: https://github.com/kmx/pdl-io-dbi
-version: 0.005
+version: 0.006
